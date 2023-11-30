@@ -44,10 +44,8 @@ class ModelZCS(dde.Model):
             with tf.GradientTape(persistent=True, watch_accessed_variables=False) as tape:
                 for z in zcs_scalars:
                     tape.watch(z)
-                zcs_vectors = [tf.repeat(zcs_scalars[i], len(trunk_inputs))
-                               for i in range(n_dim_crds)]
-                zcs_tensor = tf.stack(zcs_vectors, axis=1)
-                trunk_inputs = trunk_inputs + zcs_tensor
+                zcs_vector = tf.concat([z.reshape(1) for z in zcs_scalars], dim=0)
+                trunk_inputs = trunk_inputs + zcs_vector[None, :]
 
             # return inputs and ZCS parameters
             return (branch_inputs, trunk_inputs), {'leaves': zcs_scalars, 'tape': tape}
@@ -143,9 +141,8 @@ class ModelZCS(dde.Model):
                            for _ in range(n_dim_crds)]
 
             # add ZCS to truck inputs
-            zcs_vector = torch.cat([z.view(1) for z in zcs_scalars], dim=0)  # noqa
-            zcs_tensor = torch.ones_like(trunk_inputs) * zcs_vector[None, :]  # noqa
-            trunk_inputs = trunk_inputs + zcs_tensor
+            zcs_vector = torch.cat([z.view(1) for z in zcs_scalars], dim=0)
+            trunk_inputs = trunk_inputs + zcs_vector[None, :]
 
             # return inputs and ZCS scalars
             return (branch_inputs, trunk_inputs), {'leaves': zcs_scalars}
@@ -231,8 +228,7 @@ class ModelZCS(dde.Model):
 
             # add ZCS to truck inputs
             zcs_vector = paddle.concat([paddle.tile(z, 1) for z in zcs_scalars], axis=0)  # noqa
-            zcs_tensor = paddle.ones_like(trunk_inputs) * zcs_vector[None, :]  # noqa
-            trunk_inputs = trunk_inputs + zcs_tensor
+            trunk_inputs = trunk_inputs + zcs_vector[None, :]
 
             # return inputs and ZCS scalars
             return (branch_inputs, trunk_inputs), {'leaves': zcs_scalars}
