@@ -232,8 +232,8 @@ class ModelZCS(dde.Model):
             # NOTE: the following two lines look very bizarre because many functions in paddle
             #       currently do not support higher-order grads, such as stack() and reshape();
             #       luckily, we found that tile() and concat() always do
-            zcs_vectors = paddle.concat([paddle.tile(z, 1) for z in zcs_scalars], axis=0)  # noqa
-            zcs_tensor = paddle.concat([zcs_vectors[None, :]] * len(trunk_inputs), axis=0)
+            zcs_vector = paddle.concat([paddle.tile(z, 1) for z in zcs_scalars], axis=0)  # noqa
+            zcs_tensor = paddle.ones_like(trunk_inputs) * zcs_vector[None, :]  # noqa
             trunk_inputs = trunk_inputs + zcs_tensor
 
             # return inputs and ZCS scalars
