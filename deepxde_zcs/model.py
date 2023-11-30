@@ -143,8 +143,9 @@ class ModelZCS(dde.Model):
                            for _ in range(n_dim_crds)]
 
             # add ZCS to truck inputs
-            for i_dim in range(n_dim_crds):
-                trunk_inputs[:, i_dim] += zcs_scalars[i_dim]
+            zcs_vector = torch.cat([z.view(1) for z in zcs_scalars], dim=0)  # noqa
+            zcs_tensor = torch.ones_like(trunk_inputs) * zcs_vector[None, :]  # noqa
+            trunk_inputs = trunk_inputs + zcs_tensor
 
             # return inputs and ZCS scalars
             return (branch_inputs, trunk_inputs), {'leaves': zcs_scalars}
@@ -229,9 +230,6 @@ class ModelZCS(dde.Model):
                            for _ in range(n_dim_crds)]
 
             # add ZCS to truck inputs
-            # NOTE: the following two lines look very bizarre because many functions in paddle
-            #       currently do not support higher-order grads, such as stack() and reshape();
-            #       luckily, we found that tile() and concat() always do
             zcs_vector = paddle.concat([paddle.tile(z, 1) for z in zcs_scalars], axis=0)  # noqa
             zcs_tensor = paddle.ones_like(trunk_inputs) * zcs_vector[None, :]  # noqa
             trunk_inputs = trunk_inputs + zcs_tensor
