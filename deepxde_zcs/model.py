@@ -44,7 +44,7 @@ class ModelZCS(dde.Model):
             with tf.GradientTape(persistent=True, watch_accessed_variables=False) as tape:
                 for z in zcs_scalars:
                     tape.watch(z)
-                zcs_vector = tf.concat([z.reshape(1) for z in zcs_scalars], dim=0)
+                zcs_vector = tf.stack(zcs_scalars)
                 trunk_inputs = trunk_inputs + zcs_vector[None, :]
 
             # return inputs and ZCS parameters
@@ -141,7 +141,7 @@ class ModelZCS(dde.Model):
                            for _ in range(n_dim_crds)]
 
             # add ZCS to truck inputs
-            zcs_vector = torch.cat([z.view(1) for z in zcs_scalars], dim=0)
+            zcs_vector = torch.stack(zcs_scalars)
             trunk_inputs = trunk_inputs + zcs_vector[None, :]
 
             # return inputs and ZCS scalars
