@@ -99,26 +99,29 @@ higher-order PDEs).
 
 * PyTorch backend
 
-  | **METHOD**           | **GPU / GB** | **TIME / s** | 
+  | **METHOD**           | **GPU / MB** | **TIME / s** | 
   |----------------------|--------------|--------------|
-  | Aligned (original)   | 6.3          | 205          |
-  | Unaligned (original) | 6.4          | 118          |
-  | ZCS (ours)           | 1.2          | 23           |
+  | Aligned (original)   | 6611         | 165          |
+  | Unaligned (original) | 6785         | 160          |
+  | ZCS (ours)           | 1487         | 11           |
 
 * TensorFlow backend
   
-  Our ZCS implementation is currently not jit-compiled. We are working on it for faster running.
+  Our ZCS implementation is currently not jit-compiled. We are working on it for (maybe) faster running.
 
-  | **METHOD**           | **GPU / GB** | **TIME / s** | 
+  | **METHOD**           | **GPU / MB** | **TIME / s** | 
   |----------------------|--------------|--------------|
-  | Aligned (original)   | 9.4          | 170          |
-  | Unaligned (original) | 12.0         | 78           |
-  | ZCS (ours)           | 0.9          | 61 (no jit)  |
+  | Aligned (original)   | 9153         | 123 (jit)    |
+  | Unaligned (original) | 7767         | 75 (jit)     |
+  | ZCS (ours)           | 847          | 34 (no jit)  |
 
-  
 
 * PaddlePaddle backend
 
-  In progress.  
+  | **METHOD**           | **GPU / MB** | **TIME / s** | 
+  |----------------------|--------------|--------------|
+  | Aligned (original)   | 6423         | 207          |
+  | Unaligned (original) | 7541         | 374          |
+  | ZCS (ours)           | 1353         | 16           |
 
 Enjoy saving!
