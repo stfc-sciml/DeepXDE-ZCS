@@ -17,7 +17,8 @@ Supported backends:
 pip install git+https://github.com/stfc-sciml/DeepXDE-ZCS
 ```
 
-**Make sure you have one of the backends installed**, which are not included in our requirements.
+Note that the above line will upgrade your `DeepXDE` to 1.10.0 or higher, as required by our extension.
+Also, make sure you have one of the backends installed, which are not included in our requirements.
 
 # Usage
 
