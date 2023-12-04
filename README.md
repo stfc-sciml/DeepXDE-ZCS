@@ -96,10 +96,13 @@ To run this example (change `pytorch` to the backend you want):
   ```bash
   DDE_BACKEND=pytorch python diff_rec_aligned_pideeponet_zcs.py
   ```
+  
+If you have multiple GPUs, prepend `CUDA_VISIBLE_DEVICES=0` to the above commands
+when comparing your results with those reported below. 
 
 ### Results
 
-The GPU memory and wall time we measured on a Nvidia V100 are reported below.
+The GPU memory and wall time we measured on a Nvidia V100 (with CUDA 12.2) are reported below.
 Note that this example is a small-scale problem for quick demo; ZCS can save more (in ratio) memory
 and time for larger-scale problems (e.g., those with more functions, more points, and
 higher-order PDEs).
@@ -108,9 +111,9 @@ higher-order PDEs).
 
   | **METHOD**           | **GPU / MB** | **TIME / s** | 
   |----------------------|--------------|--------------|
-  | Aligned (original)   | 6611         | 165          |
-  | Unaligned (original) | 6785         | 160          |
-  | ZCS (ours)           | 1487         | 11           |
+  | Aligned (original)   | 5779         | 186          |
+  | Unaligned (original) | 5873         | 117          |
+  | ZCS (ours)           | 655          | 11           |
 
 * TensorFlow backend
   
@@ -118,17 +121,17 @@ higher-order PDEs).
 
   | **METHOD**           | **GPU / MB** | **TIME / s** | 
   |----------------------|--------------|--------------|
-  | Aligned (original)   | 9153         | 123 (jit)    |
-  | Unaligned (original) | 7767         | 75 (jit)     |
-  | ZCS (ours)           | 847          | 34 (no jit)  |
+  | Aligned (original)   | 9205         | 73 (jit)     |
+  | Unaligned (original) | 11694        | 70 (jit)     |
+  | ZCS (ours)           | 591          | 35 (no jit)  |
 
 
 * PaddlePaddle backend
 
   | **METHOD**           | **GPU / MB** | **TIME / s** | 
   |----------------------|--------------|--------------|
-  | Aligned (original)   | 6423         | 207          |
-  | Unaligned (original) | 7541         | 374          |
-  | ZCS (ours)           | 1353         | 16           |
+  | Aligned (original)   | 5805         | 197          |
+  | Unaligned (original) | 6923         | 385          |
+  | ZCS (ours)           | 1353         | 15           |
 
 Enjoy saving!
