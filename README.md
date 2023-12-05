@@ -97,8 +97,8 @@ To run this example (change `pytorch` to the backend you want):
   DDE_BACKEND=pytorch python diff_rec_aligned_pideeponet_zcs.py
   ```
   
-If you have multiple GPUs, prepend `CUDA_VISIBLE_DEVICES=0` to the above commands
-when comparing your results with those reported below. 
+If you have multiple GPUs, prepend `CUDA_VISIBLE_DEVICES=$gpu_number` to the above commands
+to select a load-free GPU when comparing your results with those reported below. 
 
 ### Results
 
