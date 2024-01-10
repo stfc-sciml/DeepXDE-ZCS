@@ -30,14 +30,9 @@ Replacing the classes listed in the following table:
 
 | **FROM**                                | **TO**                                    |
 |-----------------------------------------|-------------------------------------------|
-| `deepxde.icbc.DirichletBC`              | `deepxde_zcs.DirichletBC_ZCS`             |
-| `deepxde.icbc.IC`                       | `deepxde_zcs.IC_ZCS`                      |
 | `deepxde.data.PDEOperatorCartesianProd` | `deepxde_zcs.PDEOperatorCartesianProdZCS` |
 | `deepxde.Model`                         | `deepxde_zcs.ModelZCS`                    |
 
-**NOTE**: Not all boundary conditions have been extended, and we are working on this. If you need
-one of them, please submit an issue to prioritize it. Doing this on your own is also easy, mostly by
-adding the function dimension to the outputs; see [deepxde_zcs/boundary.py](deepxde_zcs/boundary.py).
 
 ### Step 2: Changing PDE to ZCS format
 

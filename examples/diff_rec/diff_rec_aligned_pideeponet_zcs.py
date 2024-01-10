@@ -41,8 +41,8 @@ geomtime = dde.geometry.GeometryXTime(geom, timedomain)
 ####################
 # boundary for ZCS #
 ####################
-bc = ddez.DirichletBC_ZCS(geomtime, lambda _: 0, lambda _, on_boundary: on_boundary)
-ic = ddez.IC_ZCS(geomtime, lambda _: 0, lambda _, on_initial: on_initial)
+bc = dde.DirichletBC(geomtime, lambda _: 0, lambda _, on_boundary: on_boundary)
+ic = dde.IC(geomtime, lambda _: 0, lambda _, on_initial: on_initial)
 
 #######################################
 # increase point sampling by 20 times #
