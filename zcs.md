@@ -9,7 +9,7 @@ Usually ZCS will reduce GPU memory consumption and wall time for training by an 
 
 Your current script can be easily equipped with ZCS if you are using
 
-* TensorFlow 2.x, PyTorch or Paddle as the backend,
+* TensorFlow 2.x, PyTorch or Paddle as the backend (**use PyTorch for best performance**),
 * `dde.data.PDEOperatorCartesianProd` as the data class, and
 * `dde.nn.DeepONetCartesianProd` as the network class.
 
@@ -85,17 +85,17 @@ The GPU memory and wall time we measured on a Nvidia V100 (with CUDA 12.2) are r
 For these measurements, we have increased the number of points in the domain from 200 to 4000, as 200
 is too small in real applications. Time is measured for 1000 iterations.
 
-| **BACKEND** | **METHOD** | **GPU / MB** | **TIME / s** | 
-|-------------|------------|--------------|--------------|
-| PyTorch     | Aligned    | 5779         | 186          |
-|             | Unaligned  | 5873         | 117          |
-|             | ZCS        | 655          | 11           |
-| TensorFlow  | Aligned    | 9205         | 73 (jit)     |
-|             | Unaligned  | 11694        | 70 (jit)     |
-|             | ZCS        | 591          | 35 (no jit)  |
-| Paddle      | Aligned    | 5805         | 197          |
-|             | Unaligned  | 6923         | 385          |
-|             | ZCS        | 1353         | 15           |
+| **BACKEND** | **METHOD** | **GPU / MB** | **TIME / s**  | 
+|-------------|------------|--------------|---------------|
+| PyTorch     | Aligned    | 5779         | 186           |
+|             | Unaligned  | 5873         | 117           |
+|             | ZCS        | 655          | 11            |
+| TensorFlow  | Aligned    | 9205         | 73 (with jit) |
+|             | Unaligned  | 11694        | 70 (with jit) |
+|             | ZCS        | 591          | 35 (no jit)   |
+| Paddle      | Aligned    | 5805         | 197           |
+|             | Unaligned  | 6923         | 385           |
+|             | ZCS        | 1353         | 15            |
 
 
 ## Example 2: Stokes flow
@@ -175,17 +175,23 @@ converge to around 10%. The following figure shows the true and the predicted so
 Note that ZCS does not affect the accuracy of the resultant model. 
 You may want to decrease the number of iterations for a quicker run.
 
-![plot](stokes_plot.png)
+<img src="stokes_plot.png" alt="stokes_plot.png" width="70%"/>
 
-The memory and time measurements on a Nvidia V100 (with CUDA 12.2)
-are given below (time measured for 1000 iterations):
+The memory and time measurements on a Nvidia A100 (40 GB, CUDA 12.2)
+are given below. Note that the wall time is measured for 100 iterations,
+and the output layer sizes for both branch and trunk networks
+are decreased from 128 to 64 due to GPU memory capacity.
 
-| **BACKEND** | **METHOD** | **GPU / MB** | **TIME / s** | 
-|-------------|------------|--------------|--------------|
-| PyTorch     | Aligned    | 5779         | 186          |
-|             | ZCS        | 655          | 11           |
-| TensorFlow  | Aligned    | 9205         | 73 (jit)     |
-|             | ZCS        | 591          | 35 (no jit)  |
+| **BACKEND** | **METHOD** | **GPU / MB**       | **TIME / s**        | 
+|-------------|------------|--------------------|---------------------|
+| PyTorch     | Aligned    | 38153              | 189                 |
+|             | ZCS        | 2784               | 13                  |
+| TensorFlow  | Aligned    | Failed<sup>†</sup> | Failed<sup>†</sup>  |
+|             | ZCS        | 4117               | 40                  |
+
+<sup>†</sup>`Aligned` failed with TensorFlow (v2.15.0) because graphing by 
+@tf.function (either with `jit_compile` on or off) took forever on the two machines 
+we tested on. If you manage to run it successfully, please report the results in an issue.
 
 
 ## Complete code
