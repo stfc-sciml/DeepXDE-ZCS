@@ -2,8 +2,9 @@
 
 Zero Coordinate Shift (ZCS) is a low-level technique for maximizing memory and 
 time efficiency of physics-informed DeepONets ([Leng et al., 2023](https://arxiv.org/abs/2311.00860)). 
-In this tutorial, we will explain how to activate ZCS for an existing DeepXDE script.
-Usually ZCS will reduce GPU memory consumption and wall time for training by an order of magnitude.
+In this tutorial, we will explain how to activate ZCS in an existing DeepXDE script.
+Usually, ZCS can reduce GPU memory consumption and wall time for training 
+by an order of magnitude.
 
 ## Prerequisite
 
@@ -15,7 +16,7 @@ Your current script can be easily equipped with ZCS if you are using
 
 ## Usage
 
-Activating ZCS support includes two steps.
+Switching to ZCS includes two steps.
 
 #### Step 1: Replacing the classes in the following table
 
@@ -34,8 +35,8 @@ def pde(x, u, v):
 ```
 
 To use ZCS, we first create a `deepxde.zcs.LazyGrad` object, passing `x` and `u` as the arguments.
-The derivatives of `u` w.r.t. `x` at any high `orders` can then be computed by `LazyGrad.compute(orders)`. 
-For example, the Laplace equation ($u_{xx}+u_{yy}=0$) can be coded as
+The derivatives of `u` w.r.t. `x` at any higher `orders` can then be computed by 
+`LazyGrad.compute(orders)`. For example, the Laplace equation ($u_{xx}+u_{yy}=0$) can be coded as
 
 ```python
 def pde(x, u, v):
@@ -69,7 +70,7 @@ def pde(x, u, v):
 ```
 
 In [the ZCS script](https://github.com/lululxvi/deepxde/tree/master/examples/operator/diff_rec_zcs_pideeponet.py),
-we change the PDE to (after replacing the classes in Step 1)
+we change the PDE to (along with replacing the classes in Step 1)
 
 ```python
 def pde(x, u, v):
@@ -83,26 +84,28 @@ def pde(x, u, v):
 
 The GPU memory and wall time we measured on a Nvidia V100 (with CUDA 12.2) are reported below.
 For these measurements, we have increased the number of points in the domain from 200 to 4000, as 200
-is too small in real applications. Time is measured for 1000 iterations.
+is likely to be insufficient for real applications. Time is measured for 1000 iterations.
 
-| **BACKEND** | **METHOD** | **GPU / MB** | **TIME / s**  | 
-|-------------|------------|--------------|---------------|
-| PyTorch     | Aligned    | 5779         | 186           |
-|             | Unaligned  | 5873         | 117           |
-|             | ZCS        | 655          | 11            |
-| TensorFlow  | Aligned    | 9205         | 73 (with jit) |
-|             | Unaligned  | 11694        | 70 (with jit) |
-|             | ZCS        | 591          | 35 (no jit)   |
-| Paddle      | Aligned    | 5805         | 197           |
-|             | Unaligned  | 6923         | 385           |
-|             | ZCS        | 1353         | 15            |
+| **BACKEND** | **METHOD** | **GPU / MB** | **TIME / s**             | 
+|-------------|------------|--------------|--------------------------|
+| PyTorch     | Aligned    | 5779         | 186                      |
+|             | Unaligned  | 5873         | 117                      |
+|             | ZCS        | 655          | 11                       |
+| TensorFlow  | Aligned    | 9205         | 73 (with jit)            |
+|             | Unaligned  | 11694        | 70 (with jit)            |
+|             | ZCS        | 591          | 35 (no jit<sup>†</sup>)  |
+| Paddle      | Aligned    | 5805         | 197                      |
+|             | Unaligned  | 6923         | 385                      |
+|             | ZCS        | 1353         | 15                       |
+
+<sup>†</sup>ZCS with Jit is on our TODO list.
 
 
 ## Example 2: Stokes flow
 
 ### The Problem
 In this example, we use a PI-DeepONet to approach the system of Stokes for fluids. 
-The domain is a 2D squire box full of liquid, with its lid moving horizontally 
+The domain is a 2D square full of liquid, with its lid moving horizontally 
 at a given variable speed. The full equations and boundary conditions are
 
 $$
@@ -115,13 +118,13 @@ $$
 \end{aligned}
 $$
 
-We learn a operator mapping from $f(x)$ to $\mathbf{u}(x, y)$ and $p(x, y)$. The
-true solution for validation is computed using [FreeFEM++](https://freefem.org/) 
+We attempt to learn a operator mapping from $f(x)$ to $\mathbf{u}(x, y)$ and $p(x, y)$,
+with $f(x)$ sampled from a Gaussian process.
+The true solution for validation is computed using [FreeFEM++](https://freefem.org/) 
 following [this tutorial](https://doc.freefem.org/tutorials/stokes.html).
 
 ### PDE implementation
-Without ZCS, [the DeepXDE script with aligned points](https://github.com/lululxvi/deepxde/tree/master/examples/operator/stokes_aligned_pideeponet.py)
-implements the PDE as
+Without ZCS, [the script with aligned points](https://github.com/lululxvi/deepxde/tree/master/examples/operator/stokes_aligned_pideeponet.py) implements the PDE as
 ```python
 def pde(xy, uvp, aux):
     mu = 0.01
@@ -141,8 +144,7 @@ def pde(xy, uvp, aux):
     return motion_x, motion_y, mass
 ```
 
-[The DeepXDE script with ZCS](https://github.com/lululxvi/deepxde/tree/master/examples/operator/stokes_zcs_pideeponet.py)
-implements the PDE as
+Accordingly, [the script with ZCS](https://github.com/lululxvi/deepxde/tree/master/examples/operator/stokes_zcs_pideeponet.py) implements the PDE as
 ```python
 def pde(xy, uvp, aux):
     mu = 0.01
@@ -170,17 +172,18 @@ Both of them should be self-explanatory.
 
 
 ### Results
-After 50,000 iterations for training, the error for both velocity and pressure should
-converge to around 10%. The following figure shows the true and the predicted solutions.
-Note that ZCS does not affect the accuracy of the resultant model. 
+After 50,000 iterations of training, the relative errors for both velocity and pressure should
+converge to around 10%. The following figure shows the true and the predicted solutions for one $f(x)$.
+Note that ZCS does not affect the accuracy of the resultant model -- it just gear up the training
+while saving GPU memory.
 You may want to decrease the number of iterations for a quicker run.
 
 <img src="stokes_plot.png" alt="stokes_plot.png" width="70%"/>
 
 The memory and time measurements on a Nvidia A100 (40 GB, CUDA 12.2)
 are given below. Note that the wall time is measured for 100 iterations,
-and the output layer sizes for both branch and trunk networks
-are decreased from 128 to 64 due to GPU memory capacity.
+and the size of the output layer for both branch and trunk
+is decreased from 128 to 64 due to GPU memory capacity.
 
 | **BACKEND** | **METHOD** | **GPU / MB**       | **TIME / s**        | 
 |-------------|------------|--------------------|---------------------|
@@ -190,7 +193,7 @@ are decreased from 128 to 64 due to GPU memory capacity.
 |             | ZCS        | 4117               | 40                  |
 
 <sup>†</sup>`Aligned` failed with TensorFlow (v2.15.0) because graphing by 
-@tf.function (either with `jit_compile` on or off) took forever on the two machines 
+`@tf.function` (either with `jit_compile` on or off) got stuck on both the two machines 
 we tested on. If you manage to run it successfully, please report the results in an issue.
 
 
