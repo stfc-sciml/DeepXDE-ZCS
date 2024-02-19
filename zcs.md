@@ -110,11 +110,13 @@ at a given variable speed. The full equations and boundary conditions are
 
 $$
 \begin{aligned}
-& -\mu \Delta \mathbf{u} + \nabla p = 0;\\
-& \nabla \cdot \mathbf{u} = 0; \\
-& u_1(x, 1) = f(x),\ u_1(x, 0) = 0,\ u_1(0, y) = 0,\ u_1(1, y) = 0; \\
-& u_2(x, 1) = 0,\ u_2(x, 0) = 0,\ u_2(0, y) = 0,\ u_2(1, y) = 0; \\
-& p(x, 0) = 0.
+   \mu\left(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}\right) - \frac{\partial p}{\partial x}=0, \quad & x\in (0,1), y\in(0, 1);\\
+   \mu\left(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial y^2}\right) - \frac{\partial p}{\partial y}=0, \quad & x\in (0,1), y\in(0, 1);\\
+    \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y}=0, \quad & x\in (0,1), y\in(0, 1);\\
+    u(x,1)=u_1(x), v(x,1)=0,  \quad & x\in(0, 1);\\
+    u(x,0)=v(x,0)=p(x,0)=0,  \quad & x\in(0, 1);\\
+    u(0,y)=v(0,y)=0,  \quad & y\in(0, 1);\\
+    u(1,y)=v(1,y)=0,  \quad & y\in(0, 1),
 \end{aligned}
 $$
 
@@ -134,10 +136,10 @@ def pde(xy, uvp, aux):
     dp_x = dde.grad.jacobian(uvp, xy, i=2, j=0)
     dp_y = dde.grad.jacobian(uvp, xy, i=2, j=1)
     # second order
-    du_xx = dde.grad.hessian(uvp, xy, i=0, j=0)
-    du_yy = dde.grad.hessian(uvp, xy, i=0, j=1)
-    dv_xx = dde.grad.hessian(uvp, xy, i=1, j=0)
-    dv_yy = dde.grad.hessian(uvp, xy, i=1, j=1)
+    du_xx = dde.grad.hessian(uvp, xy, component=0, i=0, j=0)
+    du_yy = dde.grad.hessian(uvp, xy, component=0, i=1, j=1)
+    dv_xx = dde.grad.hessian(uvp, xy, component=1, i=0, j=0)
+    dv_yy = dde.grad.hessian(uvp, xy, component=1, i=1, j=1)
     motion_x = mu * (du_xx + du_yy) - dp_x
     motion_y = mu * (dv_xx + dv_yy) - dp_y
     mass = du_x + dv_y
@@ -200,7 +202,7 @@ we tested on. If you manage to run it successfully, please report the results in
 ## Complete code
 * [Diffusion reaction equation with aligned points](https://github.com/lululxvi/deepxde/tree/master/examples/operator/diff_rec_aligned_pideeponet.py)
 * [Diffusion reaction equation with unaligned points](https://github.com/lululxvi/deepxde/tree/master/examples/operator/diff_rec_unaligned_pideeponet.py)
-* [Diffusion reaction equation with ZCS](https://github.com/lululxvi/deepxde/tree/master/examples/operator/diff_rec_zcs_pideeponet.py)
+* [Diffusion reaction equation with aligned points using ZCS](https://github.com/lululxvi/deepxde/tree/master/examples/operator/diff_rec_aligned_zcs_pideeponet.py)
 * [Stokes flow with aligned points](https://github.com/lululxvi/deepxde/tree/master/examples/operator/stokes_aligned_pideeponet.py)
-* [Stokes flow with ZCS](https://github.com/lululxvi/deepxde/tree/master/examples/operator/stokes_zcs_pideeponet.py)
+* [Stokes flow with aligned points using ZCS](https://github.com/lululxvi/deepxde/tree/master/examples/operator/stokes_aligned_zcs_pideeponet.py)
 
