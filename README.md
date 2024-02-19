@@ -1,3 +1,6 @@
+## NOTE: ZCS has been built into [the latest DeepXDE](https://github.com/lululxvi/deepxde). This repository is no longer needed by users.
+
+
 # DeepXDE-ZCS
 
 This package extends [DeepXDE](https://github.com/lululxvi/deepxde) to support the trick of
